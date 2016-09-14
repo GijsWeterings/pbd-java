@@ -14,13 +14,33 @@ import java.util.Collections;
 /**
  * Created by gijs on 13-9-16.
  */
-public class MemoryApp extends Application{
+public class MemoryApp extends Application {
 
+    /**
+     * The number of pairs we'll populate the playing field with.
+     */
     private static final int NUMBER_OF_PAIRS = 32;
+
+    /**
+     * The number of tiles we'll fit together on a row of the playing field.
+     * Additional Tiles are moved to a new row.
+     */
     private static final int TILES_PER_ROW = 8;
 
+    /**
+     * The tile dimension in px.
+     */
     private static final int TILE_SIZE = 50;
 
+    /**
+     * The playing field dimension in px.
+     */
+    private static final int FIELD_SIZE = 400;
+
+
+    /**
+     * The selected tile for comparison.
+     */
     private Tile selectedTile;
 
     @Override
@@ -34,12 +54,14 @@ public class MemoryApp extends Application{
      * </p>
      *
      * @param primaryStage the primary stage for this application, onto which
-     *                     the application scene can be set. The primary stage will be embedded in
-     *                     the browser if the application was launched as an applet.
-     *                     Applications may create other stages, if needed, but they will not be
-     *                     primary stages and will not be embedded in the browser.
+     *                     the application scene can be set.
+     *                     The primary stage will be embedded in the browser
+     *                     if the application was launched as an applet.
+     *                     Applications may create other stages, if needed,
+     *                     but they will not be primary stages and will not
+     *                     be embedded in the browser.
      */
-    public void start(Stage primaryStage) throws Exception {
+    public final void start(final Stage primaryStage) throws Exception {
         primaryStage.setTitle("My memory game");
         primaryStage.setScene(new Scene(createRootPane()));
         primaryStage.show();
@@ -52,9 +74,9 @@ public class MemoryApp extends Application{
      * This pane will serve as the playing field of the game
      * @return a configured root pane
      */
-    protected Parent createRootPane() {
+    protected final Parent createRootPane() {
         Pane root = new Pane();
-        root.setPrefSize(400, 400);
+        root.setPrefSize(FIELD_SIZE, FIELD_SIZE);
         root.getChildren().addAll(createTiles());
 
         root.setOnMouseClicked(getMouseEventEventHandler());
@@ -63,11 +85,11 @@ public class MemoryApp extends Application{
 
 
     /**
-     * Create a collection of Tile objects that can be used in a game of memory
+     * Create a collection of Tile objects that can be used in a game of memory.
      *
-     * @return
+     * @return an arrayList of Tile objects, in pairs by value and shuffled.
      */
-    protected ArrayList<Tile> createTiles() {
+    protected final ArrayList<Tile> createTiles() {
         ArrayList<Tile> tiles = new ArrayList<Tile>();
 
         for (int i = 0; i < NUMBER_OF_PAIRS; i++) {
@@ -79,8 +101,8 @@ public class MemoryApp extends Application{
 
         for (int j = 0; j < tiles.size(); j++) {
             Tile tile = tiles.get(j);
-            tile.setTranslateX(50 * (j % TILES_PER_ROW));
-            tile.setTranslateY(50 * (j / TILES_PER_ROW));
+            tile.setTranslateX(TILE_SIZE * (j % TILES_PER_ROW));
+            tile.setTranslateY(TILE_SIZE * (j / TILES_PER_ROW));
         }
 
         return tiles;
@@ -90,24 +112,23 @@ public class MemoryApp extends Application{
      * Create a MouseEventEventhandler, which controls the game's mechanics.
      * @return an Eventhandler that can interact with the board.
      */
-    protected EventHandler<MouseEvent> getMouseEventEventHandler() {
+    protected final EventHandler<MouseEvent> getMouseEventEventHandler() {
         return event -> {
             if (event.getTarget() instanceof Tile) {
                 Tile clickedTile = (Tile) event.getTarget();
-                if (clickedTile.isLocked() || clickedTile.equals(this.selectedTile)) {
+                if (clickedTile.isLocked()
+                        || clickedTile.equals(this.selectedTile)) {
                     return;
                 }
                 clickedTile.open();
 
-                if(this.selectedTile == null) {
+                if (this.selectedTile == null) {
                     this.selectedTile = clickedTile;
-                }
-                else {
-                    if(this.selectedTile.isSameValue(clickedTile)){
+                } else {
+                    if (this.selectedTile.isSameValue(clickedTile)) {
                         this.selectedTile.lock();
                         clickedTile.lock();
-                    }
-                    else {
+                    } else {
                         this.selectedTile.close();
                         clickedTile.close();
                     }
